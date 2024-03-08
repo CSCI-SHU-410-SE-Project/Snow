@@ -97,6 +97,7 @@ class User(models.Model):
         return self.followers.all()
 
     def retweet(self, flake):
+        print(self.id, "retweeted", flake.id)
         try:
             Retweet.objects.get(user=self, flake=flake)
         except Retweet.DoesNotExist:

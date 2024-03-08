@@ -51,3 +51,4 @@ l10n/
 
 # ignore local selite database
 *.sqlite3
+draft/
