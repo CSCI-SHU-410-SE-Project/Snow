@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import { like, _delete } from "../lib/flake.js";
+import { like, _delete, retweet } from "../lib/flake.js";
 import { formatDate } from '../lib/date.js';
 
 import "../../static/css/stream.css";
@@ -63,6 +63,17 @@ export default function Stream({ user, fetchStream }) {
             {flake.image && <div className="flake-image" style={{backgroundImage: `url('${flake.image.url}')`}} />}
     
             <div className="flake-cell-right-part-bottom-links">
+
+              <div className="flake-cell-button-container">
+                <button className="flake-cell-button" onClick={()=>{ retweet(flake).then((newFlake) => {
+                    if (newFlake) {
+                      updateStream(newFlake);
+                    }
+                  }); }}>
+                  <span className="fa fa-arrow-right" />
+                </button>
+                <p>{flake.retweets_count}</p>
+              </div>
 
               <div className="flake-cell-button-container">
                 <button className="flake-cell-button" onClick={() => {

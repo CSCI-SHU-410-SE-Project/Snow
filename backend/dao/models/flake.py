@@ -37,7 +37,26 @@ class Flake(models.Model):
     def get_comments(self):
         return self.comments.all()
 
+    def get_retweets(self):
+        return self.retweets.all()
 
+class Retweet(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(
+        'User',
+        on_delete=models.CASCADE,
+    )
+    creation_date = models.DateTimeField(default=timezone.now)
+    flake = models.ForeignKey(
+        Flake,
+        related_name="retweets",
+        related_query_name="retweet",
+        on_delete=models.CASCADE
+    )
+
+    class Meta:
+        constraints = [models.UniqueConstraint("user", "flake", name="unique_retweet")]
+        
 class Like(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(

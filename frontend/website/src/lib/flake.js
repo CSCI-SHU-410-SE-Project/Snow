@@ -114,3 +114,16 @@ export async function like(flake) {
   });
   return newFlake;
 }
+
+export async function retweet(flake) {
+  let newFlake = null;
+  await axios.post("/flake/retweet", {
+    id: flake.id
+  }).then((response) => {
+    newFlake = response.data;
+  }).catch((error) => {
+    console.log(error);
+  });
+  console.log("finished retweet function in flake.js")
+  return newFlake;
+}
