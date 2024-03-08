@@ -113,3 +113,16 @@ def retweet(request):
         return client_error('INVALID_PARAM', f"No such flake: {id}")
     request.user.retweet(flake)
     return success(flake)
+    
+
+## Add the unretweet endpoint
+@require_auth
+@post("unretweet")
+@contract(Schema({'id': int}))
+def unretweet(request):
+    id = request.payload['id']
+    flake = service.flake.get(id)
+    if flake is None:
+        return client_error('INVALID_PARAM', f"No such flake: {id}")
+    request.user.unretweet(flake)
+    return success(flake)

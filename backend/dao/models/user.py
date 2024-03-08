@@ -60,7 +60,7 @@ class User(models.Model):
     def get_feeds(self):
         print("run get_feeds in user.py")
         flakes = Flake.objects.filter((Q(author=self) | Q(author__follower=self)) & Q(reply_to__isnull=True))
-        retweets = Retweet.objects.filter(Q(user=self))
+        retweets = Retweet.objects.filter(Q(user=self) | Q(user__follower=self))
         #print("check point 1 ok in get_feeds")
         merged = list(flakes) + list(retweets)
         #print("check point 2 ok in get_feeds")
@@ -104,3 +104,11 @@ class User(models.Model):
                 user=self,
                 flake=flake
             )
+
+    ## Add the unretweet to the User model
+    def unretweet(self, flake):
+        try:
+            retweet = Retweet.objects.get(user=self, flake=flake)
+            retweet.delete()
+        except Retweet.DoesNotExist:
+            return
