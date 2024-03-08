@@ -101,3 +101,15 @@ def comments(request):
     offset = request.payload['offset']
     limit = request.payload['limit']
     return success(list(flake.comments.all()[offset:offset+limit]))
+
+@require_auth
+@post("retweet")
+@contract(Schema({'id': int}))
+def retweet(request):
+    print("retweet run in flake.py")
+    id = request.payload['id']
+    flake = service.flake.get(id)
+    if flake is None:
+        return client_error('INVALID_PARAM', f"No such flake: {id}")
+    request.user.retweet(flake)
+    return success(flake)

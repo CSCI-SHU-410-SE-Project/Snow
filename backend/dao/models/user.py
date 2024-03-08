@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.db.models import Q
 
 from .file import Image
-from .flake import Flake, Like
+from .flake import Flake, Like, Retweet
 
 class User(models.Model):
     id = models.AutoField(primary_key=True)
@@ -52,10 +52,19 @@ class User(models.Model):
             flake.delete()
     
     def list_flakes(self):
-        return Flake.objects.filter(Q(author=self) & Q(reply_to__isnull=True)).order_by("-creation_date")
+        flakes = Flake.objects.filter(Q(author=self) & Q(reply_to__isnull=True))
+        retweets = Retweet.objects.filter(Q(user=self))
+        merged =  list(flakes) + list(retweets)
+        return sorted(merged, key=lambda x: x.creation_date, reverse=True)
     
     def get_feeds(self):
-        return Flake.objects.filter((Q(author=self) | Q(author__follower=self)) & Q(reply_to__isnull=True)).order_by("-creation_date")
+        print("run get_feeds in user.py")
+        flakes = Flake.objects.filter((Q(author=self) | Q(author__follower=self)) & Q(reply_to__isnull=True))
+        retweets = Retweet.objects.filter(Q(user=self))
+        #print("check point 1 ok in get_feeds")
+        merged = list(flakes) + list(retweets)
+        #print("check point 2 ok in get_feeds")
+        return sorted(merged, key=lambda x: x.creation_date, reverse=True)
     
     def like(self, flake):
         try:
@@ -86,3 +95,12 @@ class User(models.Model):
     
     def get_followers(self):
         return self.followers.all()
+
+    def retweet(self, flake):
+        try:
+            Retweet.objects.get(user=self, flake=flake)
+        except Retweet.DoesNotExist:
+            Retweet.objects.create(
+                user=self,
+                flake=flake
+            )
