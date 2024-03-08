@@ -35,19 +35,19 @@ class SnowEncoder(DjangoJSONEncoder):
                 'retweets_count': len(obj.get_retweets())
             }
 
-            if isinstance(obj, Retweet):
-                return {
-                    'type': 'Retweet',
-                    'id': obj.id,
-                    'creation_date': obj.creation_date,
-                    'user': obj.user,
-                    'content': obj.flake.content if obj.flake else obj.flake, 
-                    'image': obj.flake.image if obj.flake else None,
-                    'reply_to': obj.flake.reply_to.id if obj.flake.reply_to else obj.flake.reply_to,
-                    'likes_count': len(obj.flake.get_likes()),
-                    'comments_count': len(obj.flake.get_comments()),
-                    'retweets_count': len(obj.flake.get_retweets())
-                }
+        if isinstance(obj, Retweet):
+            return {
+                'type': 'Retweet',
+                'id': obj.id,
+                'creation_date': obj.creation_date,
+                'user': obj.user,
+                'content': obj.flake.content if obj.flake else obj.flake, 
+                'image': obj.flake.image if obj.flake else None,
+                'reply_to': obj.flake.reply_to.id if obj.flake.reply_to else obj.flake.reply_to,
+                'likes_count': len(obj.flake.get_likes()),
+                'comments_count': len(obj.flake.get_comments()),
+                'retweets_count': len(obj.flake.get_retweets())
+            }
 
         if isinstance(obj, Image):
             return {
